@@ -29,7 +29,7 @@ class Application(Functions):
         
     
     def tela(self):
-        self.root.title("Cadastro de Clientes")
+        self.root.title("Atividade Somativa")
         self.root.configure(background=Application.APP_BACKGROUND_COLOR)
         LARGURA = 800
         ALTURA = 800
@@ -86,6 +86,21 @@ class Application(Functions):
         
         self.btn_verCelularesMarca = Button(self.frame_1, text='Ver celulares dessa marca', bd=2, bg=Application.BUTTONS_BG, fg=Application.BUTTON_COLOR, font=(Application.FONT_FAMILY,8,'bold'), activebackground='green',command=self.get_per_marca)
         self.btn_verCelularesMarca.place(relx=0.5, rely=0.2, relwidth=0.3, relheight=0.10)
+        
+        
+        options_export = [
+            ".XLSX",
+            ".CSV",
+        ]
+        
+        
+        self.clickedExport = StringVar()
+        self.clickedExport.set( ".XLSX" )
+        drop = OptionMenu( self.frame_1 , self.clickedExport , *options_export )
+        drop.place(relx=0.5,rely=0.4, relwidth=0.3, relheight=0.10)
+        
+        self.btn_export = Button(self.frame_1, text='Exportar para essa extensão', bd=2, bg=Application.BUTTONS_BG, fg=Application.BUTTON_COLOR, font=(Application.FONT_FAMILY,8,'bold'), activebackground='green',command=self.export)
+        self.btn_export.place(relx=0.5, rely=0.5, relwidth=0.3, relheight=0.10)
 
 
     def widget_frame2(self):
@@ -117,7 +132,6 @@ class Application(Functions):
         menubar = Menu(self.root)
         self.root.config(menu=menubar)
         filemenu = Menu(menubar)
-        filemenu2 = Menu(menubar)
         
         def Quit(): self.root.destroy()
         
@@ -125,6 +139,7 @@ class Application(Functions):
         
         filemenu.add_command(label="Sair", command=Quit)
         filemenu.add_command(label="Carregar dados da internet", command=self.web_scrapping)
+        filemenu.add_command(label="Gerar Grafico", command=self.grafico)
         
         
     

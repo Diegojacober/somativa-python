@@ -24,6 +24,7 @@ class Web:
         self.map = {
             'celular': {
                 'nome' : '/html/body/div[1]/main/div/div/div/div/div[2]/div/div[4]/div[2]/div[3]/div[1]/div[$$]/div/div/div[2]',
+                #         /html/body/div[1]/main/div/div/div/div/div[2]/div/div[4]/div[2]/div[3]/div[1]/div[1]/div/div/div[2]
                 
             }
         }
@@ -48,6 +49,7 @@ class Web:
             try:
                 
                 nome = self.driver.find_element(By.XPATH, self.map['celular']['nome'].replace('$$', f"{i}")).text
+                print(nome)
                 celular = nome.split("\n")
                 nome_celular = celular[0]
                 marca = site.split("?")[0][49:].upper()
@@ -86,16 +88,17 @@ class Web:
             marca VARCHAR(26),
             preco VARCHAR(50)
             );"""
-        
+       
         self.cursor.execute(sql)
         self._connection.commit()
+        print("crou a tabela")
         self._disconnect_db()
         
     def add_celular(self, nome, marca, preco,i, site):
     
-        self._connect_db()
         if i == 1 and site == 'https://www.extra.com.br/c/telefones-e-celulares/samsung?filtro=c38_m459&icid=155416':
             self.tables()
+        self._connect_db()
         self.cursor = self._connection.cursor()
         sql = """INSERT INTO celulares(nome, marca, preco) values(%s, %s, %s);"""
         val = (nome, marca, preco,)

@@ -5,9 +5,10 @@ import mysql.connector
 import os
 from dotenv import load_dotenv
 from web import Web
+import matplotlib.pyplot as plt
 import pyautogui as pa
 from time import sleep
-
+import pandas as pd
 
 class Functions():
     
@@ -41,8 +42,6 @@ class Functions():
     def web_scrapping(self):
         w = Web()
         
-
-
        
     def OnDoubleClick(self, event):
         self.lista_celulares.selection()
@@ -68,7 +67,6 @@ class Functions():
         for c in celulares:
             self.lista_celulares.insert("", END, values=c)
         self._disconnect_db()
-
         
     def get_per_marca(self):
         text = self.clicked.get()
@@ -81,7 +79,68 @@ class Functions():
         for c in celulares:
             self.lista_celulares.insert("", END, values=c)
         self._disconnect_db()
+
+    def export(self):
+        text = self.clickedExport.get()
+        print(text)
+        self._connect_db()
+        sql = f"SELECT * FROM celulares ORDER BY marca ASC;"
+        self.cursor.execute(sql)
+        celulares = self.cursor.fetchall()
+        self._disconnect_db()
+        celulares = pd.DataFrame(celulares)
+        
+        if text == '.XLSX':
+            print("excel")
+            os.remove('C:/Users/57761933898/Desktop/somativa-python/celulares.xlsx')
+            cel = celulares.to_excel('C:/Users/57761933898/Desktop/somativa-python/celulares.xlsx', index=False)
+            
+        elif text == '.CSV':
+            print("csv")
+            cel = celulares.to_csv('C:/Users/57761933898/Desktop/somativa-python/celulares.csv')
         
         
+    
+        
+    
+    def grafico(self):
+        
+
+        fig, ax = plt.subplots()
+        modelos = []
+        
+        self._connect_db()
+        sql = f"SELECT * FROM celulares ORDER BY preco DESC;"
+        self.cursor.execute(sql)
+        celulares = self.cursor.fetchall()
+        self._disconnect_db()
+        for celular in celulares:
+            nome = celular[1][0:30]
+            preco = celular[3]
+            try:
+                preco = preco.split(",")
+                preco = preco[0]
+                preco = int(str(preco).replace(".","").strip())
+            except:
+                print("...")
+            else:
+                modelos.append((nome,preco))
+               
+        
+        precos_ordem = sorted(modelos,reverse=True)
+        print(precos_ordem)
+
+        bar_labels = [precos_ordem[0][0],precos_ordem[1][0],precos_ordem[2][0], precos_ordem[3][0]]
+        counts = [precos_ordem[0][1],precos_ordem[1][1],precos_ordem[2][1], precos_ordem[3][1]]
+        print(bar_labels)
+        bar_colors = ['tab:red', 'tab:blue', 'tab:green', 'tab:orange']
+
+        ax.bar(bar_labels, counts, label=counts, color=bar_colors)
+
+        ax.set_ylabel('Preço')
+        ax.set_title('Celulares mais caros')
+        ax.legend(title='Modelo')
+
+        plt.show()
 
     
